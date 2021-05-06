@@ -1,0 +1,5 @@
+#Pour macOS
+.DS_Store
+
+#Pas d'import des données
+data/
