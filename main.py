@@ -130,6 +130,16 @@ for user in users:
 
 print(indicateurAgressivite)
 
+finalAgressivite = pd.DataFrame()
+finalAgressivite['id'] = idAgressivite
+finalAgressivite['agressivite'] = indicateurAgressivite
+finalAgressivite.set_index('id',  inplace=True)
+finalAgressivite.sort_index( inplace=True)
+
+print(finalAgressivite)
+
+
+
 #INDICATEURS VERIFIED et Favorites
 indicateurDfVerified = np.zeros(len(userdf))
 indicateurDfFav = np.zeros(len(userdf))
@@ -162,6 +172,6 @@ finalDf = finalDf.groupby(['id']).mean()
 print(finalDf.shape)
 finalDf.sort_index
 
-
+finalDf = finalDf.merge(finalAgressivite, on='id')
 
 print(finalDf)
