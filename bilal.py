@@ -15,7 +15,6 @@ for i in range(5):
       tweets.append(json.loads(line))
 
 df = pd.DataFrame(tweets)
-df
 
 # récupération de l'indicateur qui donne si oui ou non le compte est verifié + les fav
 userdf = df['user']

@@ -9,10 +9,9 @@ for i in range(2):
       tweets.append(json.loads(line))
 
 df = pd.DataFrame(tweets)
-
-
 print(df.head())
 print(df.describe())
+#Creation de l'indicateur de followers et abonnements et du ratio
 userdf = df['user']
 indicateurDfFriendsCount = np.zeros(len(userdf))
 indicateurDfFollowersCount = np.zeros(len(userdf))
@@ -32,8 +31,6 @@ for i in range(len(indicateurDfFollowersCount)):
     else:
         indicateurDfRatio[i] = indicateurDfFollowersCount[i]
 
-print(indicateurDfRatio)
-
 tweetsText = np.array([])
 
 for i in range(len(df)):
@@ -49,12 +46,14 @@ indicateurDfLongueurTweets = np.zeros(len(df))
 for i in range(len(df)):
     indicateurDfLongueurTweets[i] = len(tweetsText[i])
 
+#Création de l'indicateur nombre de hahtag
 entitiesdf = df['entities']
 indicateurNbHashtags = np.zeros(len(userdf))
 
 for i in range(len(entitiesdf)):
     indicateurNbHashtags[i] = len(entitiesdf[i]['hashtags'])
 
+#Création de l'indicateur nombre de URLs
 indicateurNbURLs = np.zeros(len(userdf))
 for i in range(len(entitiesdf)):
     indicateurNbURLs[i] = len(entitiesdf[i]['urls'])
@@ -99,6 +98,7 @@ for user in users:
         users[user]['frequenceFriends'] = nbOutgoingLinks / diffTime
 
     users[user]['agressivité'] = (users[user]['frequenceFriends'] + users[user]['frequenceTweet']) / 350
+
 
 indicateurAgressivite = np.array([])
 
