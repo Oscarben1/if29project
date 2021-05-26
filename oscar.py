@@ -106,3 +106,34 @@ for user in users:
     indicateurAgressivite = np.append(indicateurAgressivite, users[user]['agressivité'])
 
 print(indicateurAgressivite)
+
+#VISIBILITY
+moyLengthHashtags = 11.6
+moyLengthMention = 11.4
+
+# "usersVis" stockera les données nécessaire au calcul de l'agressivité pour chaque profile
+usersVis = {}
+# On execute la requête et pour chacun des tweets, on conserve les données qui nous intéressent
+for i in range(len(df)):
+    # Si l'utilisateur n'a pas encore été rencontré, on l'ajoute à notre dictionnaire users
+    if df.iloc[i, :]['user'].get('id') not in usersVis:
+        usersVis[df.iloc[i, :]['user'].get('id')] = {}
+        usersVis[df.iloc[i, :]['user'].get('id')]['hashtags'] = []
+        usersVis[df.iloc[i, :]['user'].get('id')]['user_mentions'] = []
+        usersVis[df.iloc[i, :]['user'].get('id')]['user_mentions'].append(len(df.iloc[i, :]['entities'].get('user_mentions')))
+        usersVis[df.iloc[i, :]['user'].get('id')]['hashtags'].append(len(df.iloc[i, :]['entities'].get('hashtags')))
+
+    # Sinon on ajoute l'id d'utilisateur au dictionnaire users
+    else:
+        usersVis[df.iloc[i, :]['user'].get('id')]['hashtags'].append(len(df.iloc[i, :]['entities'].get('hashtags')))
+        usersVis[df.iloc[i, :]['user'].get('id')]['user_mentions'].append(len(df.iloc[i, :]['entities'].get('user_mentions')))
+
+print("Parcours des utilisateurs fini pour visibilité")
+
+for user in usersVis:
+    nbTotalHashtags = usersVis[user].get('hashtags')
+    nbTotalUser_mentions = usersVis[user].get('user_mentions')
+    avgHashtags = sum(nbTotalHashtags) / len(nbTotalHashtags)
+    avgUser_mentions = sum(nbTotalUser_mentions) / len(nbTotalUser_mentions)
+    visibilité = ((avgHashtags * moyLengthHashtags) + (avgUser_mentions * moyLengthMention)) / 140
+    usersVis[user]['visibilité'] = visibilité

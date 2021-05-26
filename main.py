@@ -114,6 +114,37 @@ for user in users:
 
     users[user]['agressivité'] = (users[user]['frequenceFriends'] + users[user]['frequenceTweet']) / 350
 
+#VISIBILITY
+moyLengthHashtags = 11.6
+moyLengthMention = 11.4
+
+# "usersVis" stockera les données nécessaire au calcul de l'agressivité pour chaque profile
+usersVis = {}
+# On execute la requête et pour chacun des tweets, on conserve les données qui nous intéressent
+for i in range(len(df)):
+    # Si l'utilisateur n'a pas encore été rencontré, on l'ajoute à notre dictionnaire users
+    if df.iloc[i, :]['user'].get('id') not in usersVis:
+        usersVis[df.iloc[i, :]['user'].get('id')] = {}
+        usersVis[df.iloc[i, :]['user'].get('id')]['hashtags'] = []
+        usersVis[df.iloc[i, :]['user'].get('id')]['user_mentions'] = []
+        usersVis[df.iloc[i, :]['user'].get('id')]['user_mentions'].append(len(df.iloc[i, :]['entities'].get('user_mentions')))
+        usersVis[df.iloc[i, :]['user'].get('id')]['hashtags'].append(len(df.iloc[i, :]['entities'].get('hashtags')))
+
+    # Sinon on ajoute l'id d'utilisateur au dictionnaire users
+    else:
+        usersVis[df.iloc[i, :]['user'].get('id')]['hashtags'].append(len(df.iloc[i, :]['entities'].get('hashtags')))
+        usersVis[df.iloc[i, :]['user'].get('id')]['user_mentions'].append(len(df.iloc[i, :]['entities'].get('user_mentions')))
+
+print("Parcours des utilisateurs fini pour visibilité")
+
+for user in usersVis:
+    nbTotalHashtags = usersVis[user].get('hashtags')
+    nbTotalUser_mentions = usersVis[user].get('user_mentions')
+    avgHashtags = sum(nbTotalHashtags) / len(nbTotalHashtags)
+    avgUser_mentions = sum(nbTotalUser_mentions) / len(nbTotalUser_mentions)
+    visibilité = ((avgHashtags * moyLengthHashtags) + (avgUser_mentions * moyLengthMention)) / 140
+    usersVis[user]['visibilité'] = visibilité
+
 
 #Récupération des id qui concordent avec les valeurs d'agressivité du np array
 indicateurAgressivite = np.array([])
@@ -123,12 +154,8 @@ idAgressivite = np.array([])
 for i in range(len(idAgressivitetemp)):
     idAgressivite = np.append(idAgressivite, str(idAgressivitetemp[i]))
 
-print(idAgressivite)
-
 for user in users:
     indicateurAgressivite = np.append(indicateurAgressivite, users[user]['agressivité'])
-
-print(indicateurAgressivite)
 
 finalAgressivite = pd.DataFrame()
 finalAgressivite['id'] = idAgressivite
@@ -138,6 +165,22 @@ finalAgressivite.sort_index( inplace=True)
 
 print(finalAgressivite)
 
+#Récupération des id qui concordent avec les valeurs de visibilité du np array
+indicateurVisibilite = np.array([])
+idVisibilitetemp = list(users.keys())
+idVisibilite = np.array([])
+
+for i in range(len(idVisibilitetemp)):
+    idVisibilite = np.append(idVisibilite, str(idVisibilitetemp[i]))
+
+for user in users:
+    indicateurVisibilite = np.append(indicateurVisibilite, usersVis[user]['visibilité'])
+
+finalVisibilite = pd.DataFrame()
+finalVisibilite['id'] = idVisibilite
+finalVisibilite['visibilite'] = indicateurVisibilite
+finalVisibilite.set_index('id',  inplace=True)
+finalVisibilite.sort_index( inplace=True)
 
 
 #INDICATEURS VERIFIED et Favorites
@@ -161,7 +204,7 @@ finalDf['friends_count'] = indicateurDfFriendsCount
 finalDf['followers_count'] = indicateurDfFollowersCount
 finalDf['ratio'] = indicateurDfRatio
 finalDf['tweetLength'] = indicateurDfLongueurTweets
-finalDf['hashtags'] = indicateurNbHashtags
+#finalDf['hashtags'] = indicateurNbHashtags Je pense qu'on peut le retirer car le nb de hashtags est une variable de la feature visibilite
 finalDf['URLs'] = indicateurNbURLs
 #finalDf['sensible'] = indicateurDfSensible
 #finalDf['verified'] = indicateurDfVerified
@@ -173,5 +216,6 @@ print(finalDf.shape)
 finalDf.sort_index
 
 finalDf = finalDf.merge(finalAgressivite, on='id')
+finalDf = finalDf.merge(finalVisibilite, on='id')
 
-print(finalDf)
+print(finalDf.columns)
