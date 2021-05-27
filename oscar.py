@@ -1,11 +1,16 @@
+import os
+
+os.chdir('C:\\Users\\oscar\\OneDrive\\Bureau\\IF29\\Tweet Worldcup\\raw')
+os.getcwd()
+
 import json
 import pandas as pd
 import numpy as np
 
 # Opening JSON file
 tweets = []
-for i in range(2):
-  for line in open('data/raw'+ str(i) +'.json', 'r', encoding='utf8'):
+for i in range(20):
+  for line in open('raw'+ str(i) +'.json', 'r', encoding='utf8'):
       tweets.append(json.loads(line))
 
 df = pd.DataFrame(tweets)
@@ -137,3 +142,4 @@ for user in usersVis:
     avgUser_mentions = sum(nbTotalUser_mentions) / len(nbTotalUser_mentions)
     visibilité = ((avgHashtags * moyLengthHashtags) + (avgUser_mentions * moyLengthMention)) / 140
     usersVis[user]['visibilité'] = visibilité
+

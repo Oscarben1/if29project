@@ -1,11 +1,16 @@
+import os
+
+os.chdir('C:\\Users\\oscar\\OneDrive\\Bureau\\IF29\\Tweet Worldcup\\raw')
+os.getcwd()
+
 import json
 import pandas as pd
 import numpy as np
 
 # Opening JSON file
 tweets = []
-for i in range(2):
-  for line in open('data/raw'+ str(i) +'.json', 'r', encoding='utf8'):
+for i in range(3):
+  for line in open('raw'+ str(i) +'.json', 'r', encoding='utf8'):
       tweets.append(json.loads(line))
 #tableau de chaque tweet
 df = pd.DataFrame(tweets)
@@ -16,11 +21,6 @@ userId = np.array([])
 for i in range(len(df)):
     userId = np.append(userId, df.iloc[i, :]['user'].get('id_str'))
 
-print(userId)
-print(type(userId))
-
-print(df.head())
-print(df.describe())
 #Creation de l'indicateur de followers et abonnements et du ratio
 userdf = df['user']
 indicateurDfFriendsCount = np.zeros(len(userdf))
@@ -91,7 +91,7 @@ for i in range(len(df)):
         users[df.iloc[i, :]['user'].get('id')]['timestamp'].append(int(df.iloc[i, :]['timestamp_ms']))
         users[df.iloc[i, :]['user'].get('id')]['outgoinglinks'].append(len(df.iloc[i, :]['entities'].get('urls')))
 
-print("Parcours des utilisateurs fini")
+print("Parcours des utilisateurs fini pour agressivite")
 
 # On détermine l'agressivité de chacun des profiles
 for user in users:
@@ -163,7 +163,6 @@ finalAgressivite['agressivite'] = indicateurAgressivite
 finalAgressivite.set_index('id',  inplace=True)
 finalAgressivite.sort_index( inplace=True)
 
-print(finalAgressivite)
 
 #Récupération des id qui concordent avec les valeurs de visibilité du np array
 indicateurVisibilite = np.array([])
@@ -210,12 +209,11 @@ finalDf['URLs'] = indicateurNbURLs
 #finalDf['verified'] = indicateurDfVerified
 finalDf['fav'] = indicateurDfFav
 
-print(finalDf.shape)
+
 finalDf = finalDf.groupby(['id']).mean()
-print(finalDf.shape)
 finalDf.sort_index
 
 finalDf = finalDf.merge(finalAgressivite, on='id')
 finalDf = finalDf.merge(finalVisibilite, on='id')
 
-print(finalDf.columns)
+finalDf.to_csv('C:\\Users\\oscar\\OneDrive\\Bureau\\IF29\\test.csv', encoding='utf-8')
