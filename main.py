@@ -9,14 +9,15 @@ import numpy as np
 
 # Opening JSON file
 tweets = []
-for i in range(3):
-  for line in open('raw'+ str(i) +'.json', 'r', encoding='utf8'):
-      tweets.append(json.loads(line))
+for i in range(2286):
+    for line in open('raw'+ str(i) +'.json', 'r', encoding='utf8'):
+        tweets.append(json.loads(line))
+    print(i)
 #tableau de chaque tweet
 df = pd.DataFrame(tweets)
 
 userId = np.array([])
-
+print("chargés")
 #récupération des id utilisateur
 for i in range(len(df)):
     userId = np.append(userId, df.iloc[i, :]['user'].get('id_str'))
@@ -41,7 +42,7 @@ for i in range(len(indicateurDfFollowersCount)):
     else:
         indicateurDfRatio[i] = indicateurDfFollowersCount[i]
 
-
+print("indicateur ratio ok")
 # création du tableau de texte de tweets
 tweetsText = np.array([],dtype = 'object')
 
@@ -113,7 +114,7 @@ for user in users:
         users[user]['frequenceFriends'] = nbOutgoingLinks / diffTime
 
     users[user]['agressivité'] = (users[user]['frequenceFriends'] + users[user]['frequenceTweet']) / 350
-
+print("agressivité terminé")
 #VISIBILITY
 moyLengthHashtags = 11.6
 moyLengthMention = 11.4
@@ -145,7 +146,7 @@ for user in usersVis:
     visibilité = ((avgHashtags * moyLengthHashtags) + (avgUser_mentions * moyLengthMention)) / 140
     usersVis[user]['visibilité'] = visibilité
 
-
+print("variable visibilité finie")
 #Récupération des id qui concordent avec les valeurs d'agressivité du np array
 indicateurAgressivite = np.array([])
 idAgressivitetemp = list(users.keys())
@@ -174,7 +175,7 @@ for i in range(len(idVisibilitetemp)):
 
 for user in users:
     indicateurVisibilite = np.append(indicateurVisibilite, usersVis[user]['visibilité'])
-
+print("id recupérés pour ag et vis")
 finalVisibilite = pd.DataFrame()
 finalVisibilite['id'] = idVisibilite
 finalVisibilite['visibilite'] = indicateurVisibilite
@@ -182,20 +183,17 @@ finalVisibilite.set_index('id',  inplace=True)
 finalVisibilite.sort_index( inplace=True)
 
 
-#INDICATEURS VERIFIED et Favorites
-indicateurDfVerified = np.zeros(len(userdf))
+#INDICATEUR Favourites
 indicateurDfFav = np.zeros(len(userdf))
 for i in range(len(userdf)):
     for key, value in userdf[i].items():
-        if (key == 'Verified'):
-            indicateurDfVerified[i] = value
-        elif (key == 'favourites_count'):
+        if (key == 'favourites_count'):
             indicateurDfFav[i] = value
-
+'''
 # recupération de l'indicateur qui va nous donner si oui ou non le tweet est potentiellement sensible
 poss = df['possibly_sensitive']
 indicateurDfSensible = poss.to_numpy()
-
+'''
 finalDf = pd.DataFrame()
 
 finalDf['id'] = userId
@@ -203,7 +201,7 @@ finalDf['friends_count'] = indicateurDfFriendsCount
 finalDf['followers_count'] = indicateurDfFollowersCount
 finalDf['ratio'] = indicateurDfRatio
 finalDf['tweetLength'] = indicateurDfLongueurTweets
-#finalDf['hashtags'] = indicateurNbHashtags Je pense qu'on peut le retirer car le nb de hashtags est une variable de la feature visibilite
+finalDf['hashtags'] = indicateurNbHashtags
 finalDf['URLs'] = indicateurNbURLs
 #finalDf['sensible'] = indicateurDfSensible
 #finalDf['verified'] = indicateurDfVerified
@@ -216,4 +214,4 @@ finalDf.sort_index
 finalDf = finalDf.merge(finalAgressivite, on='id')
 finalDf = finalDf.merge(finalVisibilite, on='id')
 
-finalDf.to_csv('C:\\Users\\oscar\\OneDrive\\Bureau\\IF29\\test.csv', encoding='utf-8')
+finalDf.to_csv('C:\\Users\\oscar\\OneDrive\\Bureau\\IF29\\finalDF.csv', encoding='utf-8')
