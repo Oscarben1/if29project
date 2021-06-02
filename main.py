@@ -9,7 +9,7 @@ import numpy as np
 
 # Opening JSON file
 tweets = []
-for i in range(2286):
+for i in range(300):
     for line in open('raw'+ str(i) +'.json', 'r', encoding='utf8'):
         tweets.append(json.loads(line))
     print(i)

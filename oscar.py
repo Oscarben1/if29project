@@ -1,12 +1,52 @@
 import os
 
+import matplotlib.pyplot as plt
+
 os.chdir('C:\\Users\\oscar\\OneDrive\\Bureau\\IF29\\Tweet Worldcup\\raw')
 os.getcwd()
 
 import json
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 
+os.chdir('C:\\Users\\oscar\\OneDrive\\Bureau\\IF29')
+df = pd.read_csv('finalDF.csv')
+
+#On centre réduit les données
+s_sc = StandardScaler()
+df_processed = s_sc.fit_transform(df)
+
+#On réalise l'ACP
+modelPCA = PCA(n_components=2)
+df_reduced = modelPCA.fit_transform(df_processed)
+
+plt.scatter(df_reduced[:,0],df_reduced[:,1])
+plt.show()
+
+#Elbow method
+inertia = []
+K_range = range(1, 6)
+for i in K_range:
+    modelElbow = KMeans(n_clusters=i).fit(df_reduced)
+    inertia.append(modelElbow.inertia_)
+
+plt.plot(K_range, inertia)
+plt.xlabel('nb de clusters')
+plt.ylabel('Inertie')
+plt.show()
+
+#KMeans
+modelKMeans = KMeans(n_clusters=2)
+df_KMeans = modelKMeans.fit(df_reduced)
+
+plt.scatter(df_reduced[:,0], df_reduced[:,1], c=modelKMeans.predict(df_reduced))
+plt.scatter(modelKMeans.cluster_centers_[:,0], modelKMeans.cluster_centers_[:,1], c='r')
+plt.show()
+
+'''
 # Opening JSON file
 tweets = []
 for i in range(20):
@@ -142,4 +182,4 @@ for user in usersVis:
     avgUser_mentions = sum(nbTotalUser_mentions) / len(nbTotalUser_mentions)
     visibilité = ((avgHashtags * moyLengthHashtags) + (avgUser_mentions * moyLengthMention)) / 140
     usersVis[user]['visibilité'] = visibilité
-
+'''
