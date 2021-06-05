@@ -34,6 +34,7 @@ L'installation d'un module se fait avec la commande suivante :
 1. Calcul des indicateurs :
 
 Afin de déterminer si un profil est suspect ou non, nous récupérons les indicateurs suivants :
+
     - nombre de followers
     - nombre d'abonnés
     - ratio followers/abonnés
