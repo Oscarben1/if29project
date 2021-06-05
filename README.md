@@ -8,7 +8,7 @@ Nous disposons d'une base de données composée de tweets. L'objectif est de com
 
 ## Utilisation du programme :
 
-Prérequis :
+### Prérequis :
 
 1. Structure initiale des données :
 Vos données de tweets doivent être au format json. Elles doivent être rangées dans un dossier nommé "data" et chaque fichier de tweet est nommé "raw0, raw1...".
@@ -16,29 +16,29 @@ Vos données de tweets doivent être au format json. Elles doivent être rangée
 2. Se placer dans le répertoire de travail
 
 3. Modules à installer :
-  - os
-  - json
-  - pandas
-  - numpy
-  - matplotlib
-  - sklearn
+    - os
+    - json
+    - pandas
+    - numpy
+    - matplotlib
+    - sklearn
 
 L'installation d'un module se fait avec la commande suivante :
 
-pip install <nomModule>
+pip install nomModule
 
-Lancement des analyses :
+### Lancement des analyses :
 
 1. Calcul des indicateurs :
 Afin de déterminer si un profil est suspect ou non, nous récupérons les indicateurs suivants :
-  - nombre de followers
-  - nombre d'abonnés
-  - ratio followers/abonnés
-  - longeur du tweet
-  - nombre de hashtags 
-  - nombre d'URLs
-  - agressivité
-  - visibilité
+    - nombre de followers
+    - nombre d'abonnés
+    - ratio followers/abonnés
+    - longeur du tweet
+    - nombre de hashtags 
+    - nombre d'URLs
+    - agressivité
+    - visibilité
 
 
 2. Lancer ACP
