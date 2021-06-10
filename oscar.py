@@ -43,11 +43,21 @@ plt.show()
 #KMeans
 modelKMeans = KMeans(n_clusters=3)
 df_KMeans = modelKMeans.fit(df_reduced)
+label = modelKMeans.fit_predict(df_reduced)
 
-plt.scatter(df_reduced[:,0], df_reduced[:,1], c=modelKMeans.predict(df_reduced))
+filtered_label0 = df_reduced[label == 0]
+filtered_label1 = df_reduced[label == 1]
+filtered_label2 = df_reduced[label == 2]
+
+plt.scatter(filtered_label0[:,0] , filtered_label0[:,1] , color = 'red')
+plt.scatter(filtered_label1[:,0] , filtered_label1[:,1] , color = 'black')
+plt.scatter(filtered_label2[:,0] , filtered_label2[:,1] , color = 'green')
+plt.show()
+'''
+plt.scatter(df_reduced[:,0], df_reduced[:,1], c=modelKMeans.predict(df_reduced), label=modelKMeans.labels_)
 plt.scatter(modelKMeans.cluster_centers_[:,0], modelKMeans.cluster_centers_[:,1], c='r')
 plt.show()
-
+'''
 '''
 # Opening JSON file
 tweets = []
