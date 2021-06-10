@@ -15,6 +15,8 @@ from sklearn.cluster import KMeans
 os.chdir('C:\\Users\\oscar\\OneDrive\\Bureau\\IF29')
 df = pd.read_csv('finalDF.csv')
 
+print(df.shape)
+
 #On centre réduit les données
 s_sc = StandardScaler()
 df_processed = s_sc.fit_transform(df)
@@ -39,7 +41,7 @@ plt.ylabel('Inertie')
 plt.show()
 
 #KMeans
-modelKMeans = KMeans(n_clusters=2)
+modelKMeans = KMeans(n_clusters=3)
 df_KMeans = modelKMeans.fit(df_reduced)
 
 plt.scatter(df_reduced[:,0], df_reduced[:,1], c=modelKMeans.predict(df_reduced))
