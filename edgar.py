@@ -73,12 +73,12 @@ plt.legend()
 plt.show() """
 #User from each clusters
 
-cluster0 = pd.DataFrame(df[df_KMeans.labels_==0])
-cluster1 = pd.DataFrame(df[df_KMeans.labels_==1])
-cluster2 = pd.DataFrame(df[df_KMeans.labels_==2])
-cluster3 = pd.DataFrame(df[df_KMeans.labels_==3])
-cluster4 = pd.DataFrame(df[df_KMeans.labels_==4])
-cluster5 = pd.DataFrame(df[df_KMeans.labels_==5])
+cluster0 = pd.DataFrame(df_reduced[df_KMeans.labels_==0])
+cluster1 = pd.DataFrame(df_reduced[df_KMeans.labels_==1])
+cluster2 = pd.DataFrame(df_reduced[df_KMeans.labels_==2])
+cluster3 = pd.DataFrame(df_reduced[df_KMeans.labels_==3])
+cluster4 = pd.DataFrame(df_reduced[df_KMeans.labels_==4])
+cluster5 = pd.DataFrame(df_reduced[df_KMeans.labels_==5])
 
 cluster0['suspect'] = 1
 cluster1['suspect'] = -1
@@ -95,28 +95,32 @@ print(cluster4.head())
 print(cluster5.head()) """
 
 dataset_label = pd.concat([cluster0, cluster1, cluster2, cluster3, cluster4, cluster5])
-dataset_final = np.array(dataset_label.drop(columns=['id']))
+dataset_final = np.array(dataset_label)
 
 """ print(dataset_label) """
 #print(dataset_final)
 
 X = dataset_final[:,:-1]
 Y = dataset_final[:,-1]
-""" 
+
 print(X)
-print(Y) """
+print(Y)
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=0.8, random_state = 0)
 
 print(X_train)
 
-linear = svm.SVC(kernel='linear')
+linear = svm.SVC(kernel='poly')
 
 linear.fit(X_train, Y_train)
 
 Y_pred = linear.predict(X_test)
 
 print("Accuracy:",metrics.accuracy_score(Y_test, Y_pred))
+
+plt.scatter(X_test[:, 0], X_test[:, 1], c = Y_pred )
+plt.legend()
+plt.show()
 
 #User ID from each clusters
 
