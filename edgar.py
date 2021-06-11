@@ -5,10 +5,15 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn import svm, datasets
+from sklearn import metrics
+""" from lxml import html
+import requests
+import bs4
+from urllib.request import urlopen """
 
-
-
-df = pd.read_csv('finalDF.csv')
+df = pd.read_csv('data/finalDF.csv')
 
 #On centre réduit les données
 s_sc = StandardScaler()
@@ -27,33 +32,113 @@ K_range = range(1, 6)
 for i in K_range:
     modelElbow = KMeans(n_clusters=i).fit(df_reduced)
     inertia.append(modelElbow.inertia_)
-""" 
-plt.plot(K_range, inertia)
+
+""" plt.plot(K_range, inertia)
 plt.xlabel('nb de clusters')
 plt.ylabel('Inertie')
 plt.show() """
 
 #KMeans
-modelKMeans = KMeans(n_clusters=2)
+modelKMeans = KMeans(n_clusters=6)
 df_KMeans = modelKMeans.fit(df_reduced)
 
-""" plt.scatter(df_reduced[:,0], df_reduced[:,1], c=modelKMeans.predict(df_reduced))
+""" plt.scatter(df_reduced[:,0], df_reduced[:,1], c=df_KMeans.labels_)
 plt.scatter(modelKMeans.cluster_centers_[:,0], modelKMeans.cluster_centers_[:,1], c='r')
+plt.legend()
 plt.show() """
 
+""" for i in range(0, df_reduced.shape[0]):
+    if df_KMeans.labels_[i] == 0:
+     c1 = plt.scatter(df_reduced[i,0],df_reduced[i,1],c='r')
+    elif df_KMeans.labels_[i] == 1:
+     c2 = plt.scatter(df_reduced[i,0],df_reduced[i,1],c='g')
+    elif df_KMeans.labels_[i] == 2:
+     c3 = plt.scatter(df_reduced[i,0],df_reduced[i,1],c='b')
+    elif df_KMeans.labels_[i] == 3:
+     c4 = plt.scatter(df_reduced[i,0],df_reduced[i,1],c='y')
+    elif df_KMeans.labels_[i] == 4:
+     c5 = plt.scatter(df_reduced[i,0],df_reduced[i,1],c='w')
+    elif df_KMeans.labels_[i] == 5:
+     c6 = plt.scatter(df_reduced[i,0],df_reduced[i,1],c='c')
+plt.legend([c1, c2, c3,c4,c5,c6],['Cluster 1', 'Cluster 0','Cluster 2','Cluster3','Cluster 4','Cluster 5', 'Cluster 6'])
+plt.title('K-means clusters the Twitter dataset into 6 clusters')
+plt.show() """
+
+
+ 
+#plotting the results:
+""" for i in range(7):
+    plt.scatter(df[df_KMeans.labels_ == i ] , df[df_KMeans.labels_ == i ] , label = i)
+plt.legend()
+plt.show() """
 #User from each clusters
 
-cluster0 = df[df_KMeans.labels_==0]
-cluster1 = df[df_KMeans.labels_==1]
+cluster0 = pd.DataFrame(df[df_KMeans.labels_==0])
+cluster1 = pd.DataFrame(df[df_KMeans.labels_==1])
+cluster2 = pd.DataFrame(df[df_KMeans.labels_==2])
+cluster3 = pd.DataFrame(df[df_KMeans.labels_==3])
+cluster4 = pd.DataFrame(df[df_KMeans.labels_==4])
+cluster5 = pd.DataFrame(df[df_KMeans.labels_==5])
 
-#print(cluster0.head(100))
+cluster0['suspect'] = 1
+cluster1['suspect'] = -1
+cluster2['suspect'] = -1
+cluster3['suspect'] = -1
+cluster4['suspect'] = -1
+cluster5['suspect'] = -1
+
+""" print(cluster0.head())
+print(cluster1.head())
+print(cluster2.head())
+print(cluster3.head())
+print(cluster4.head())
+print(cluster5.head()) """
+
+dataset_label = pd.concat([cluster0, cluster1, cluster2, cluster3, cluster4, cluster5])
+dataset_final = np.array(dataset_label.drop(columns=['id']))
+
+""" print(dataset_label) """
+#print(dataset_final)
+
+X = dataset_final[:,:-1]
+Y = dataset_final[:,-1]
+""" 
+print(X)
+print(Y) """
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=0.8, random_state = 0)
+
+print(X_train)
+
+linear = svm.SVC(kernel='linear')
+
+linear.fit(X_train, Y_train)
+
+Y_pred = linear.predict(X_test)
+
+print("Accuracy:",metrics.accuracy_score(Y_test, Y_pred))
 
 #User ID from each clusters
 
-cluster0_id = np.array(cluster0["id"])
-cluster1_id = np.array(cluster1["id"])
+""" cluster0_id = np.array(cluster0["id"])
+cluster1_id = np.array(cluster1["id"]) """
 
-print(cluster0_id[0])
+""" print(cluster0_id[0])
+
+userId = '1000037449295450112'
+
+print(userId)
+
+response = urlopen('https://twitter.com/intent/user?user_id='+str(userId))
+
+soup = bs4.BeautifulSoup(response, 'html.parser')
+
+print(soup.get_text()) """
+
+""" if response.status_code == 200:
+    print('User exists')
+else:
+    print('User does not exist')  """
 
 """ # Opening JSON file
 tweets = []
