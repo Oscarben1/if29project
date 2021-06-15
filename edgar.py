@@ -13,27 +13,27 @@ import requests
 import bs4
 from urllib.request import urlopen """
 
-df = pd.read_csv('data/finalDF.csv')
+df = pd.read_csv('data/finalDF.csv').drop(["id","id_user"], axis=1).iloc[400000:480000,:]
 
 #On centre réduit les données
 s_sc = StandardScaler()
 df_processed = s_sc.fit_transform(df)
-
+print("1")
 #On réalise l'ACP
 modelPCA = PCA(n_components=2)
 df_reduced = modelPCA.fit_transform(df_processed)
-
+print("2")
 """ plt.scatter(df_reduced[:,0],df_reduced[:,1])
 plt.show()
 
-#Elbow method """
+#Elbow method
 inertia = []
 K_range = range(1, 6)
 for i in K_range:
     modelElbow = KMeans(n_clusters=i).fit(df_reduced)
     inertia.append(modelElbow.inertia_)
 
-""" plt.plot(K_range, inertia)
+ plt.plot(K_range, inertia)
 plt.xlabel('nb de clusters')
 plt.ylabel('Inertie')
 plt.show() """
@@ -41,12 +41,28 @@ plt.show() """
 #KMeans
 modelKMeans = KMeans(n_clusters=6)
 df_KMeans = modelKMeans.fit(df_reduced)
-
+print("3")
 """ plt.scatter(df_reduced[:,0], df_reduced[:,1], c=df_KMeans.labels_)
 plt.scatter(modelKMeans.cluster_centers_[:,0], modelKMeans.cluster_centers_[:,1], c='r')
 plt.legend()
 plt.show() """
+label = modelKMeans.fit_predict(df_reduced)
 
+filtered_label0 = df_reduced[label == 0]
+filtered_label1 = df_reduced[label == 1]
+filtered_label2 = df_reduced[label == 2]
+filtered_label3 = df_reduced[label == 3]
+filtered_label4 = df_reduced[label == 4]
+filtered_label5 = df_reduced[label == 5]
+
+plt.scatter(filtered_label0[:,0] , filtered_label0[:,1] , color = 'red')
+plt.scatter(filtered_label1[:,0] , filtered_label1[:,1] , color = 'black')
+plt.scatter(filtered_label2[:,0] , filtered_label2[:,1] , color = 'green')
+plt.scatter(filtered_label3[:,0] , filtered_label3[:,1] , color = 'cyan')
+plt.scatter(filtered_label4[:,0] , filtered_label4[:,1] , color = 'magenta')
+plt.scatter(filtered_label5[:,0] , filtered_label5[:,1] , color = 'yellow')
+print("4")
+plt.show()
 """ for i in range(0, df_reduced.shape[0]):
     if df_KMeans.labels_[i] == 0:
      c1 = plt.scatter(df_reduced[i,0],df_reduced[i,1],c='r')
@@ -79,14 +95,16 @@ cluster2 = pd.DataFrame(df_reduced[df_KMeans.labels_==2])
 cluster3 = pd.DataFrame(df_reduced[df_KMeans.labels_==3])
 cluster4 = pd.DataFrame(df_reduced[df_KMeans.labels_==4])
 cluster5 = pd.DataFrame(df_reduced[df_KMeans.labels_==5])
+print("5")
 
 cluster0['suspect'] = 1
 cluster1['suspect'] = -1
 cluster2['suspect'] = -1
+print("6")
 cluster3['suspect'] = -1
 cluster4['suspect'] = -1
 cluster5['suspect'] = -1
-
+print("7")
 """ print(cluster0.head())
 print(cluster1.head())
 print(cluster2.head())
@@ -96,31 +114,38 @@ print(cluster5.head()) """
 
 dataset_label = pd.concat([cluster0, cluster1, cluster2, cluster3, cluster4, cluster5])
 dataset_final = np.array(dataset_label)
-
+print("8")
 """ print(dataset_label) """
 #print(dataset_final)
 
 X = dataset_final[:,:-1]
+print("9")
 Y = dataset_final[:,-1]
 
 print(X)
+print("10")
 print(Y)
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=0.8, random_state = 0)
 
 print(X_train)
-
+print("11")
 linear = svm.SVC(kernel='poly')
-
+print(12)
 linear.fit(X_train, Y_train)
-
+print("13")
 Y_pred = linear.predict(X_test)
-
+print("14")
 print("Accuracy:",metrics.accuracy_score(Y_test, Y_pred))
 
-plt.scatter(X_test[:, 0], X_test[:, 1], c = Y_pred )
-plt.legend()
+plt.scatter(X_train[:, 0], X_train[:, 1], c = Y_train)
+print("15")
 plt.show()
+
+plt.scatter(X_test[:, 0], X_test[:, 1], c = Y_pred )
+print("16")
+plt.show()
+
 
 #User ID from each clusters
 
