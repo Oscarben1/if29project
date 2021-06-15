@@ -24,7 +24,7 @@ modelPCA = PCA(n_components=2)
 df_reduced = modelPCA.fit_transform(df_processed)
 print("2")
 """ plt.scatter(df_reduced[:,0],df_reduced[:,1])
-plt.show()
+plt.show() 
 
 #Elbow method
 inertia = []
